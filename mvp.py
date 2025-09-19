@@ -1,4 +1,7 @@
 import pandas as pd 
+from defs import ordenar
+
+choose_order, choose_filter = 0, 0
 
 
 data = pd.read_csv("relatorio.csv", sep=";", encoding="utf-8")              #Le e armazena o csv
@@ -23,8 +26,39 @@ wide = agg.pivot_table(       #Olha linha por linha. do agg
 )
 
 wide['Total'] = wide['Entrada'] - wide['Saida']
-#Transforma todos os numeros da tabela em inteiros, troca NaN por 0 e coloca em ordem crescente de saida 
-wide = wide.fillna(0).astype(int).sort_values(by='Saida', ascending=False)  
 
-print(wide.head())
+#Transforma todos os numeros da tabela em inteiros e troca NaN por 0 
+wide = wide.fillna(0).astype(int)
+
+#Opçoes para filtrar a tabela 
+print("Filtros")
+print("1- Total\n" \
+      "2- Entrada\n" \
+      "3 - Saida\n")
+print("Ordem - \n"
+      "1- Crescente\n" \
+      "2- Decrescente\n")
+
+#Escolha do usuario
+choose_filter = int(input("Escolha o filtro"))
+choose_order  = int(input("Escolha a ordem"))
+
+#Lógica da escolha
+if 0 < choose_filter < 4:
+    if choose_filter == 1:
+        coluna = "Total"
+    elif choose_filter == 2:
+        coluna = "Entrada"
+    else:
+        coluna = "Saida"
+
+if 0 < choose_order < 3:
+    crescente = True if choose_order == 1 else False
+
+#Chama a função pra ordenar
+wide = ordenar(wide, coluna, crescente)
+
+print(wide.head(10))
+
+
 
