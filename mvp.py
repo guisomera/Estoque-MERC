@@ -35,6 +35,7 @@ print("Filtros")
 print("1- Total\n" \
       "2- Entrada\n" \
       "3 - Saida\n")
+
 print("Ordem - \n"
       "1- Crescente\n" \
       "2- Decrescente\n")
