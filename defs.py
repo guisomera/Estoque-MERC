@@ -33,9 +33,8 @@ def treatments(raw_data):
         aggfunc='sum'                   #Se tiver mais de uma linha no mesmo produto (duas entradas) ele soma
     )
 
+    wide = wide.fillna(0).astype(int)
     wide = wide.reindex(columns=["Entrada", "Saida"], fill_value= 0 )
     wide['Total'] = wide['Entrada'] - wide['Saida']     #Cria a coluna total
-
-    wide = wide.fillna(0).astype(int)
 
     return wide
