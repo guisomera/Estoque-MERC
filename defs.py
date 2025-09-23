@@ -6,7 +6,7 @@ def ordenar(df, coluna, crescente=True):
 def ingest(files: list):
     data = []
     for csv in files:
-        df = pd.read_csv(csv, sep=";", encoding="utf-8")
+        df = pd.read_csv(csv, sep=None, engine="python", encoding="utf-8-sig")
         data.append(df)
 
     return pd.concat(data, ignore_index=True)       #Junta tudo em um documento só
@@ -21,6 +21,8 @@ def treatments(raw_data):
         }
     })
 
+    df_clean["Quantidade"] = pd.to_numeric(df_clean["Quantidade"], errors="coerce").fillna(0)
+
     #Junta as linhas que tem mesmo produto e evento
     #Soma as quantidades
     #volta pro formato normal
@@ -33,7 +35,7 @@ def treatments(raw_data):
         aggfunc='sum'                   #Se tiver mais de uma linha no mesmo produto (duas entradas) ele soma
     )
 
-    wide = wide.fillna(0).astype(int)
+    wide = wide.fillna(0).astype(int)           #Transforma os NaN em 0
     wide = wide.reindex(columns=["Entrada", "Saida"], fill_value= 0 )
     wide['Total'] = wide['Entrada'] - wide['Saida']     #Cria a coluna total
 
