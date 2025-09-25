@@ -1,12 +1,22 @@
 import streamlit as st
 import pandas as pd
-from defs import treatments
+import io
+from defs import treatments, concat_treaments
 
 uploaded_file =  st.file_uploader("Envie seu CSV", type="csv", accept_multiple_files=True)
 
 st.title("ANÁLISE DE ESTOQUE")
-if uploaded_file is not None:
-    raw_data = pd.read_csv(uploaded_file, sep=None, engine="python")
-    tbl_stock_summary = treatments(raw_data)
-    st.write(tbl_stock_summary)
+if uploaded_file:
+    summaries = []
+    for doc in uploaded_file:
+        file_byte = doc.getvalue()
+        csv_text = file_byte.decode()
+        buffer= io.StringIO(csv_text)
+        df_raw = pd.read_csv(buffer, sep=None, engine="python")
+        summary_df = treatments(df_raw)
+        summaries.append(summary_df)
+
+    concated_df = pd.concat(summaries)
+    final_df = concat_treaments(concated_df)
+    st.write(final_df)
     

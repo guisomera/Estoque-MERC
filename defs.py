@@ -40,3 +40,10 @@ def treatments(raw_data):
     wide['Total'] = wide['Entrada'] - wide['Saida']     #Cria a coluna total
 
     return wide
+
+def concat_treaments(concated_df):
+    final_df = pd.DataFrame(concated_df)
+    final_df = final_df[["Entrada", "Saida", "Total"]].astype(int)
+    final_df = final_df.groupby("Produto").sum()
+
+    return final_df
