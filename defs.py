@@ -37,13 +37,22 @@ def treatments(raw_data):
 
     wide = wide.fillna(0).astype(int)           #Transforma os NaN em 0
     wide = wide.reindex(columns=["Entrada", "Saida"], fill_value= 0 )
-    wide['Total'] = wide['Entrada'] - wide['Saida']     #Cria a coluna total
+    wide['Estoque'] = wide['Entrada'] - wide['Saida']     #Cria a coluna total
 
     return wide
 
 def concat_treaments(concated_df):
     final_df = pd.DataFrame(concated_df)
-    final_df = final_df[["Entrada", "Saida", "Total"]].astype(int)
-    final_df = final_df.groupby("Produto").sum()
+    final_df = final_df[["Entrada", "Saida", "Estoque"]].astype(int)
+    final_df.index.name = 'Produto'
 
     return final_df
+
+def get_balance(raw_data):
+    df = pd.DataFrame(raw_data, columns=["Entrada", "Saida"])
+    total_entrada = df["Entrada"].sum()
+    total_saida = df["Saida"].sum()
+
+    sum_balance = pd.DataFrame({"Categoria": ["Entrada", "Saida", "Estoque"], "Valor": [total_entrada, total_saida, total_entrada - total_saida]}, index=["Entrada", "Saida", "Saldo"])
+
+    return sum_balance
