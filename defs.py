@@ -14,19 +14,12 @@ def ingest(files: list):
 def treatments(raw_data):
     df = pd.DataFrame(raw_data, columns=['Produto', 'Evento', 'Quantidade'])  #Armazena só os dados que quero
 
-    df_clean = df.replace({                                                   #Tratando dados
-        "Evento":{
-            "TransferenciaSaida": "Saida", 
-            "TransferenciaEntrada": "Entrada"
-        }
-    })
-
-    df_clean["Quantidade"] = pd.to_numeric(df_clean["Quantidade"], errors="coerce").fillna(0)
+    df["Quantidade"] = pd.to_numeric(df["Quantidade"], errors="coerce").fillna(0)
 
     #Junta as linhas que tem mesmo produto e evento
     #Soma as quantidades
     #volta pro formato normal
-    agg_products_events = df_clean.groupby(["Produto", "Evento"])["Quantidade"].sum().reset_index()  
+    agg_products_events = df.groupby(["Produto", "Evento"])["Quantidade"].sum().reset_index()  
 
     wide = agg_products_events.pivot_table(         #Percorre linha por linha 
         index= 'Produto',               #Define quem sera a linha
@@ -49,6 +42,7 @@ def concat_treaments(concated_df):
     return final_df
 
 def get_balance(raw_data):
+    #Fiz outro dataframe por conta da estrutura do grafico de pizza
     df = pd.DataFrame(raw_data, columns=["Entrada", "Saida"])
     total_entrada = df["Entrada"].sum()
     total_saida = df["Saida"].sum()

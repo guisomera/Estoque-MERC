@@ -27,7 +27,6 @@ with st.sidebar:                #"NA SIDEBAR"
 if not uploaded_file:
     st.info("Faça o upload do arquivo para ver a análise")
 elif uploaded_file:
-    st.success(f"Arquivo recebido:")
     summaries = []
     for doc in uploaded_file:
         try:        #Pega os valores em bytes
@@ -39,16 +38,13 @@ elif uploaded_file:
         except Exception as e:
             st.error(f"Falha ao processar {doc.name}: {e}")        
 
-
     concated_df = pd.concat(summaries)
-    final_df = concat_treaments(concated_df)
-    
+    st.session_state["final_df"] = concat_treaments(concated_df)
+
     with col1:
         st.write(concated_df)
     
     balance = get_balance(concated_df)
-
-
     fig = px.pie(balance, values="Valor", names="Categoria", color='Categoria', 
              color_discrete_map={"Entrada": "#27AE60",
                                  "Saida": "#C0392B",
