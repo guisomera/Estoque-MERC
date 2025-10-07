@@ -13,30 +13,17 @@ if df is None:
 
 df = pd.DataFrame(df, columns=["Estoque"])
 
-positive = df["Estoque"] > 0
-negaitve = df["Estoque"] < 1
+filtros = {
+    "Nenhum": lambda df : None,
+    "Itens em estoque": lambda df: df[df["Estoque"] > 0],
+    "Itens faltantes": lambda df: df[df["Estoque"] < 1],
+    "Abaixo do Mínimo": lambda df: df[df["Estoque"]]
+}
 
-if "show_mode" not in st.session_state:
-    st.session_state["show_mode"] = "nenhum"
-
-with col1:
-    positive_button = st.button("Mostrar Estoque")
-with col2:
-    negative_button = st.button("Negativos")
-
-if positive_button:
-    st.session_state["show_mode"] = "positivo"
-elif negative_button:
-    st.session_state["show_mode"] = "negativo"
+filtro_selecionado = st.selectbox("Escolha um filtro", filtros, index= 0)
+if filtro_selecionado == "Nenhum":
+    st.info("Selecione um filtro")
+    st.stop()
 else:
-    st.session_state["show_mode"] = "nenhum"
-
-if st.session_state["show_mode"] == "positivo":
-    result = df[positive]
-elif st.session_state["show_mode"] == "negativo":
-    result = df[negaitve]
-
-if result is None:
-    st.write("Escolha algum filtro")
-else:
-    st.write(result)
+    df_filtered = filtros[filtro_selecionado](df)
+    st.write(df_filtered)
